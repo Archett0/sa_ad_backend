@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import sg.edu.nus.ad_backend.model.Member;
+import sg.edu.nus.ad_backend.model.MemberCredit;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -14,9 +15,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class MemberRepositoryTest {
+public class MemberCreditRepositoryTest {
     @Autowired
-    private MemberRepository memberRepository;
+    private MemberCreditRepository repository;
+    @Autowired
+    private MemberRepository mRepository;
 
     @Test
     public void testFindAll() {
@@ -42,12 +45,16 @@ public class MemberRepositoryTest {
                 "bio",
                 "https://avatar.com"
         );
-        memberRepository.save(member1);
-        memberRepository.save(member2);
-        List<Member> members = memberRepository.findAll();
-        assertEquals(2, members.size());
-        assertEquals("username1", members.get(0).getUsername());
-        assertEquals("username2", members.get(1).getUsername());
+        mRepository.save(member1);
+        mRepository.save(member2);
+        MemberCredit mc1 = new MemberCredit(member1, 100);
+        MemberCredit mc2 = new MemberCredit(member2, 80);
+        repository.save(mc1);
+        repository.save(mc2);
+        List<MemberCredit> mcs = repository.findAll();
+        assertEquals(2, mcs.size());
+        assertEquals("username1", mcs.get(0).getMember().getUsername());
+        assertEquals("username2", mcs.get(1).getMember().getUsername());
     }
 
     @Test
@@ -63,10 +70,12 @@ public class MemberRepositoryTest {
                 "bio",
                 "https://avatar.com"
         );
-        memberRepository.save(member);
-        Optional<Member> result = memberRepository.findById(member.getId());
+        mRepository.save(member);
+        MemberCredit mc = new MemberCredit(member, 100);
+        repository.save(mc);
+        Optional<MemberCredit> result = repository.findById(mc.getId());
         assertTrue(result.isPresent());
-        assertEquals(member.getUsername(), result.get().getUsername());
+        assertEquals(mc.getCredit(), result.get().getCredit());
     }
 
     @Test
@@ -82,8 +91,10 @@ public class MemberRepositoryTest {
                 "bio",
                 "https://avatar.com"
         );
-        Member result = memberRepository.save(member);
-        assertEquals(member, result);
+        mRepository.save(member);
+        MemberCredit mc = new MemberCredit(member, 100);
+        MemberCredit result = repository.save(mc);
+        assertEquals(mc, result);
     }
 
     @Test
@@ -99,8 +110,10 @@ public class MemberRepositoryTest {
                 "bio",
                 "https://avatar.com"
         );
-        memberRepository.save(member);
-        memberRepository.delete(member);
-        assertEquals(0, memberRepository.count());
+        mRepository.save(member);
+        MemberCredit mc = new MemberCredit(member, 100);
+        repository.save(mc);
+        repository.delete(mc);
+        assertEquals(0, repository.count());
     }
 }
