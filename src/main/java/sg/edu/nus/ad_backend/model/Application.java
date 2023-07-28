@@ -1,9 +1,6 @@
 package sg.edu.nus.ad_backend.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -21,7 +18,7 @@ public class Application extends BasicEntity {
     @JoinColumn(name = "book_id")
     private Book book;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "recipient_id")
     private Member recipient;
 
