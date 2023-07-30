@@ -18,6 +18,7 @@ public class EntityToDTO {
 
     public static StaffDTO staffToDto(Staff staff) {
         return new StaffDTO(
+                staff.getId(),
                 staff.getUsername(),
                 staff.getPhoneNumber(),
                 staff.getEmail(),
