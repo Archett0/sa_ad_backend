@@ -14,6 +14,8 @@
     <name>ad_backend</name>
     <description>ad_backend</description>
     <properties>
+        <jib-maven-plugin.version>3.3.2</jib-maven-plugin.version>
+        <docker.image.prefix>adapiregistry.azurecr.io</docker.image.prefix>
         <java.version>20</java.version>
     </properties>
     <dependencies>
