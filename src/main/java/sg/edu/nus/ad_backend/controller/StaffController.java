@@ -19,12 +19,12 @@ public class StaffController {
     }
 
     @GetMapping
-    public ResponseEntity<List<StaffDTO>> getAllStaffs() {
+    public ResponseEntity<List<StaffDTO>> getAll() {
         return ResponseEntity.ok(staffService.getAllStaffs().stream().map(EntityToDTO::staffToDto).toList());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<StaffDTO> getStaffById(@PathVariable("id") Long id) {
+    public ResponseEntity<StaffDTO> getOne(@PathVariable("id") Long id) {
         Staff staff = staffService.getStaffById(id);
         if (staff == null) {
             return ResponseEntity.notFound().build();
@@ -33,12 +33,12 @@ public class StaffController {
     }
 
     @PostMapping
-    public ResponseEntity<StaffDTO> createStaff(@RequestBody Staff staff) {
+    public ResponseEntity<StaffDTO> create(@RequestBody Staff staff) {
         return ResponseEntity.ok(EntityToDTO.staffToDto(staffService.saveStaff(staff)));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<StaffDTO> updateStaff(@PathVariable("id") Long id, @RequestBody Staff staff) {
+    public ResponseEntity<StaffDTO> update(@PathVariable("id") Long id, @RequestBody Staff staff) {
         Staff existingStaff = staffService.getStaffById(id);
         if (existingStaff == null) {
             return ResponseEntity.notFound().build();
@@ -49,7 +49,7 @@ public class StaffController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteStaffById(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
         Staff existingStaff = staffService.getStaffById(id);
         if (existingStaff == null) {
             return ResponseEntity.notFound().build();

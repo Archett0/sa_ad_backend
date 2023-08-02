@@ -19,12 +19,12 @@ public class MemberController {
     }
 
     @GetMapping
-    public ResponseEntity<List<MemberDTO>> getAllMembers() {
+    public ResponseEntity<List<MemberDTO>> getAll() {
         return ResponseEntity.ok(memberService.getAllMembers().stream().map(EntityToDTO::memberToDto).toList());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MemberDTO> getMemberById(@PathVariable("id") Long id) {
+    public ResponseEntity<MemberDTO> getOne(@PathVariable("id") Long id) {
         Member member = memberService.getMemberById(id);
         if (member == null) {
             return ResponseEntity.notFound().build();
@@ -40,7 +40,7 @@ public class MemberController {
      * @return Created member
      */
     @PostMapping
-    public ResponseEntity<MemberDTO> createMember(@RequestBody Member member) {
+    public ResponseEntity<MemberDTO> create(@RequestBody Member member) {
         return ResponseEntity.ok(EntityToDTO.memberToDto(memberService.saveMember(member)));
     }
 
@@ -54,7 +54,7 @@ public class MemberController {
      * @return updated member dto
      */
     @PutMapping("/{id}")
-    public ResponseEntity<MemberDTO> updateMember(@PathVariable("id") Long id, @RequestBody Member member) {
+    public ResponseEntity<MemberDTO> update(@PathVariable("id") Long id, @RequestBody Member member) {
         Member existingMember = memberService.getMemberById(id);
         if (existingMember == null) {
             return ResponseEntity.notFound().build();
@@ -65,7 +65,7 @@ public class MemberController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteMemberById(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
         Member existingMember = memberService.getMemberById(id);
         if (existingMember == null) {
             return ResponseEntity.notFound().build();
