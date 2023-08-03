@@ -161,7 +161,7 @@ public class ApplicationRepositoryTest {
         );
         mRepository.save(member1);
         mRepository.save(member2);
-        Book book = new Book(123, "Book1", "Au1", "http:cover1", 1, "Desc1", "fiction", "Press1", 0, 1, member2);
+        Book book = new Book(123, "Book1", "Au1", "http:cover1", 1, "Desc1", "fiction", "Press1", 0, 1, 0,member2);
         bRepository.save(book);
         Application application = new Application(book, member1, 0);
         repository.save(application);
