@@ -47,6 +47,7 @@ public class SpringSecurityConfig {
                         // allow error page
                         .requestMatchers("/error").permitAll()
                         // allow swagger
+                        .requestMatchers("/api.html").permitAll()
                         .requestMatchers("/swagger**/**").permitAll()
                         .requestMatchers("/webjars/**").permitAll()
                         .requestMatchers("/v3/**").permitAll()
