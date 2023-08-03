@@ -44,6 +44,8 @@ public class SpringSecurityConfig {
                         .requestMatchers("/").permitAll()
                         // allow access login api
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+                        // allow member to access register api
+                        .requestMatchers(HttpMethod.POST, "/api/member").permitAll()
                         // allow error page
                         .requestMatchers("/error").permitAll()
                         // allow swagger
