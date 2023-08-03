@@ -6,6 +6,7 @@ import sg.edu.nus.ad_backend.dto.EntityToDTO;
 import sg.edu.nus.ad_backend.dto.MemberDTO;
 import sg.edu.nus.ad_backend.model.Member;
 import sg.edu.nus.ad_backend.service.IMemberService;
+import sg.edu.nus.ad_backend.util.EncryptPassword;
 
 import java.util.List;
 
@@ -41,6 +42,7 @@ public class MemberController {
      */
     @PostMapping
     public ResponseEntity<MemberDTO> create(@RequestBody Member member) {
+        member.setPassword(EncryptPassword.encodePassword(member.getPassword()));
         return ResponseEntity.ok(EntityToDTO.memberToDto(memberService.saveMember(member)));
     }
 

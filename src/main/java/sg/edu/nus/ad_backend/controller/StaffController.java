@@ -6,6 +6,7 @@ import sg.edu.nus.ad_backend.dto.EntityToDTO;
 import sg.edu.nus.ad_backend.dto.StaffDTO;
 import sg.edu.nus.ad_backend.model.Staff;
 import sg.edu.nus.ad_backend.service.IStaffService;
+import sg.edu.nus.ad_backend.util.EncryptPassword;
 
 import java.util.List;
 
@@ -34,6 +35,7 @@ public class StaffController {
 
     @PostMapping
     public ResponseEntity<StaffDTO> create(@RequestBody Staff staff) {
+        staff.setPassword(EncryptPassword.encodePassword(staff.getPassword()));
         return ResponseEntity.ok(EntityToDTO.staffToDto(staffService.saveStaff(staff)));
     }
 
