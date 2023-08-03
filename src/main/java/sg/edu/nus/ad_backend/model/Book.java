@@ -35,6 +35,9 @@ public class Book extends BasicEntity {
 
     private Integer status;
 
+    @Column(name = "like_count")
+    private Integer likeCount;
+
     @OneToOne
     @JoinColumn(name = "donor_id")
     private Member donor;

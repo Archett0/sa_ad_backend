@@ -48,8 +48,8 @@ public class BookRepositoryTest {
         );
         mRepository.save(member1);
         mRepository.save(member2);
-        Book book1 = new Book(123, "Book1", "Au1", "http:cover1", 1, "Desc1", "fiction", "Press1", 0, 1, member1);
-        Book book2 = new Book(456, "Book2", "Au2", "http:cover2", 1, "Desc2", "literature", "Press2", 10, 2, member2);
+        Book book1 = new Book(123, "Book1", "Au1", "http:cover1", 1, "Desc1", "fiction", "Press1", 0, 1, 0, member1);
+        Book book2 = new Book(456, "Book2", "Au2", "http:cover2", 1, "Desc2", "literature", "Press2", 10, 2, 0, member2);
         repository.save(book1);
         repository.save(book2);
         List<Book> books = repository.findAll();
@@ -72,7 +72,7 @@ public class BookRepositoryTest {
                 "https://avatar.com"
         );
         mRepository.save(member);
-        Book book = new Book(123, "Book1", "Au1", "http:cover1", 1, "Desc1", "fiction", "Press1", 0, 1, member);
+        Book book = new Book(123, "Book1", "Au1", "http:cover1", 1, "Desc1", "fiction", "Press1", 0, 1, 0, member);
         repository.save(book);
         Optional<Book> result = repository.findById(book.getId());
         assertTrue(result.isPresent());
@@ -93,7 +93,7 @@ public class BookRepositoryTest {
                 "https://avatar.com"
         );
         mRepository.save(member);
-        Book book = new Book(123, "Book1", "Au1", "http:cover1", 1, "Desc1", "fiction", "Press1", 0, 1, member);
+        Book book = new Book(123, "Book1", "Au1", "http:cover1", 1, "Desc1", "fiction", "Press1", 0, 1, 0, member);
         Book result = repository.save(book);
         assertEquals(book, result);
     }
@@ -112,7 +112,7 @@ public class BookRepositoryTest {
                 "https://avatar.com"
         );
         mRepository.save(member);
-        Book book = new Book(123, "Book1", "Au1", "http:cover1", 1, "Desc1", "fiction", "Press1", 0, 1, member);
+        Book book = new Book(123, "Book1", "Au1", "http:cover1", 1, "Desc1", "fiction", "Press1", 0, 1, 0, member);
         repository.save(book);
         repository.delete(book);
         assertEquals(0, repository.count());

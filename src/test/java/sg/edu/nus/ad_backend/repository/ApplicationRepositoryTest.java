@@ -53,8 +53,8 @@ public class ApplicationRepositoryTest {
         );
         mRepository.save(member1);
         mRepository.save(member2);
-        Book book1 = new Book(123, "Book1", "Au1", "http:cover1", 1, "Desc1", "fiction", "Press1", 0, 1, member2);
-        Book book2 = new Book(456, "Book2", "Au2", "http:cover2", 1, "Desc2", "literature", "Press2", 10, 2, member1);
+        Book book1 = new Book(123, "Book1", "Au1", "http:cover1", 1, "Desc1", "fiction", "Press1", 0, 1, 0, member2);
+        Book book2 = new Book(456, "Book2", "Au2", "http:cover2", 1, "Desc2", "literature", "Press2", 10, 2, 0, member1);
         bRepository.save(book1);
         bRepository.save(book2);
         Application application1 = new Application(book1, member1, 0);
@@ -93,7 +93,7 @@ public class ApplicationRepositoryTest {
         );
         mRepository.save(member1);
         mRepository.save(member2);
-        Book book = new Book(123, "Book1", "Au1", "http:cover1", 1, "Desc1", "fiction", "Press1", 0, 1, member2);
+        Book book = new Book(123, "Book1", "Au1", "http:cover1", 1, "Desc1", "fiction", "Press1", 0, 1, 0, member2);
         bRepository.save(book);
         Application application = new Application(book, member1, 0);
         repository.save(application);
@@ -128,7 +128,7 @@ public class ApplicationRepositoryTest {
         );
         mRepository.save(member1);
         mRepository.save(member2);
-        Book book = new Book(123, "Book1", "Au1", "http:cover1", 1, "Desc1", "fiction", "Press1", 0, 1, member2);
+        Book book = new Book(123, "Book1", "Au1", "http:cover1", 1, "Desc1", "fiction", "Press1", 0, 1, 0, member2);
         bRepository.save(book);
         Application application = new Application(book, member1, 0);
         Application result = repository.save(application);

@@ -58,8 +58,8 @@ public class TransactionRepositoryTest {
         );
         mRepository.save(member1);
         mRepository.save(member2);
-        Book book1 = new Book(123, "Book1", "Au1", "http:cover1", 1, "Desc1", "fiction", "Press1", 0, 1, member2);
-        Book book2 = new Book(456, "Book2", "Au2", "http:cover2", 1, "Desc2", "literature", "Press2", 10, 2, member1);
+        Book book1 = new Book(123, "Book1", "Au1", "http:cover1", 1, "Desc1", "fiction", "Press1", 0, 1, 0, member2);
+        Book book2 = new Book(456, "Book2", "Au2", "http:cover2", 1, "Desc2", "literature", "Press2", 10, 2, 0, member1);
         bRepository.save(book1);
         bRepository.save(book2);
         CollectionPoint cp1 = new CollectionPoint("cp01", "Singapore, Singapore, 187352", 0, "https://demo_qr.server/1");
@@ -103,7 +103,7 @@ public class TransactionRepositoryTest {
         );
         mRepository.save(member1);
         mRepository.save(member2);
-        Book book = new Book(123, "Book1", "Au1", "http:cover1", 1, "Desc1", "fiction", "Press1", 0, 1, member2);
+        Book book = new Book(123, "Book1", "Au1", "http:cover1", 1, "Desc1", "fiction", "Press1", 0, 1, 0, member2);
         bRepository.save(book);
         CollectionPoint cp = new CollectionPoint("cp01", "Singapore, Singapore, 187352", 0, "https://demo_qr.server/1");
         cpRepository.save(cp);
@@ -140,7 +140,7 @@ public class TransactionRepositoryTest {
         );
         mRepository.save(member1);
         mRepository.save(member2);
-        Book book = new Book(123, "Book1", "Au1", "http:cover1", 1, "Desc1", "fiction", "Press1", 0, 1, member2);
+        Book book = new Book(123, "Book1", "Au1", "http:cover1", 1, "Desc1", "fiction", "Press1", 0, 1, 0, member2);
         bRepository.save(book);
         CollectionPoint cp = new CollectionPoint("cp01", "Singapore, Singapore, 187352", 0, "https://demo_qr.server/1");
         cpRepository.save(cp);
@@ -175,7 +175,7 @@ public class TransactionRepositoryTest {
         );
         mRepository.save(member1);
         mRepository.save(member2);
-        Book book = new Book(123, "Book1", "Au1", "http:cover1", 1, "Desc1", "fiction", "Press1", 0, 1, member2);
+        Book book = new Book(123, "Book1", "Au1", "http:cover1", 1, "Desc1", "fiction", "Press1", 0, 1, 0, member2);
         bRepository.save(book);
         CollectionPoint cp = new CollectionPoint("cp01", "Singapore, Singapore, 187352", 0, "https://demo_qr.server/1");
         cpRepository.save(cp);
