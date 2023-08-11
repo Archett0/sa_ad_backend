@@ -35,4 +35,9 @@ public class BookService implements IBookService {
         repository.deleteById(id);
         return null;
     }
+
+    @Override
+    public List<Book> getBooksByMemberId(Long id) {
+        return repository.getBooksByMemberId(id);
+    }
 }

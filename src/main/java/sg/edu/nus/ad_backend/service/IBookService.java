@@ -9,4 +9,5 @@ public interface IBookService {
     Book getBookById(Long id);
     Book saveBook(Book book);
     Void deleteBookById(Long id);
+    List<Book> getBooksByMemberId(Long id);
 }
