@@ -35,14 +35,4 @@ public class Transaction extends BasicEntity {
     private LocalDateTime completeTime;
 
     private Integer status;
-
-    @OneToOne
-    @JoinColumn(name = "collection_point_id")
-    private CollectionPoint collectionPoint;
-
-    @Column(name = "rating_donor")
-    private Double ratingDonor;
-
-    @Column(name = "rating_recipient")
-    private Double ratingRecipient;
 }

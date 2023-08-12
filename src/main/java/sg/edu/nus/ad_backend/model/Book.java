@@ -41,4 +41,8 @@ public class Book extends BasicEntity {
     @OneToOne
     @JoinColumn(name = "donor_id")
     private Member donor;
+
+    @ManyToOne
+    @JoinColumn(name = "collection_point_id")
+    private CollectionPoint collectionPoint;
 }
