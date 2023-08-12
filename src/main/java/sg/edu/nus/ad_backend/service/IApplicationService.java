@@ -9,4 +9,5 @@ public interface IApplicationService {
     Application getApplicationById(Long id);
     Application saveApplication(Application application);
     Void deleteApplicationById(Long id);
+    List<Application> getByMemberId(Long id);
 }

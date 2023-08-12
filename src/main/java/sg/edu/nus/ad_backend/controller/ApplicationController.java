@@ -3,7 +3,9 @@ package sg.edu.nus.ad_backend.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sg.edu.nus.ad_backend.model.Application;
+import sg.edu.nus.ad_backend.model.Member;
 import sg.edu.nus.ad_backend.service.IApplicationService;
+import sg.edu.nus.ad_backend.service.IMemberService;
 
 import java.util.List;
 
@@ -11,9 +13,11 @@ import java.util.List;
 @RequestMapping("/api/application")
 public class ApplicationController {
     private final IApplicationService applicationService;
+    private final IMemberService memberService;
 
-    public ApplicationController(IApplicationService applicationService) {
+    public ApplicationController(IApplicationService applicationService, IMemberService memberService) {
         this.applicationService = applicationService;
+        this.memberService = memberService;
     }
 
     @GetMapping
@@ -52,5 +56,14 @@ public class ApplicationController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(applicationService.deleteApplicationById(id));
+    }
+
+    @GetMapping("/member/{id}")
+    public ResponseEntity<List<Application>> byMemberId(@PathVariable("id") Long id) {
+        Member member = memberService.getMemberById(id);
+        if (member == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(applicationService.getByMemberId(id));
     }
 }

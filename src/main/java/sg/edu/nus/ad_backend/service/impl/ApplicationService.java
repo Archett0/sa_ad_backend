@@ -35,4 +35,9 @@ public class ApplicationService implements IApplicationService {
         repository.deleteById(id);
         return null;
     }
+
+    @Override
+    public List<Application> getByMemberId(Long id) {
+        return repository.getApplicationsByMemberId(id);
+    }
 }
