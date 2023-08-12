@@ -46,6 +46,8 @@ public class SpringSecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         // allow member to access register api
                         .requestMatchers(HttpMethod.POST, "/api/member").permitAll()
+                        // allow random books before login
+                        .requestMatchers(HttpMethod.GET, "/api/book/random").permitAll()
                         // allow error page
                         .requestMatchers("/error").permitAll()
                         // allow swagger

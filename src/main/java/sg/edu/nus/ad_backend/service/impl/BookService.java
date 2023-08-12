@@ -40,4 +40,9 @@ public class BookService implements IBookService {
     public List<Book> getBooksByMemberId(Long id) {
         return repository.getBooksByMemberId(id);
     }
+
+    @Override
+    public List<Book> getRandomBooks() {
+        return repository.getRandomBooks();
+    }
 }

@@ -66,4 +66,9 @@ public class BookController {
         }
         return ResponseEntity.ok(bookService.deleteBookById(id));
     }
+
+    @GetMapping("/random")
+    public ResponseEntity<List<Book>> getRandom() {
+        return ResponseEntity.ok(bookService.getRandomBooks());
+    }
 }

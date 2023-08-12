@@ -10,4 +10,5 @@ public interface IBookService {
     Book saveBook(Book book);
     Void deleteBookById(Long id);
     List<Book> getBooksByMemberId(Long id);
+    List<Book> getRandomBooks();
 }

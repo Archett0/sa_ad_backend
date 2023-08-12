@@ -9,4 +9,7 @@ import java.util.List;
 public interface BookRepository extends JpaRepository<Book, Long> {
     @Query("SELECT b FROM Book b WHERE b.donor.id = :memberId")
     List<Book> getBooksByMemberId(Long memberId);
+
+    @Query("SELECT b FROM Book b ORDER BY RAND() LIMIT 10")
+    List<Book> getRandomBooks();
 }
