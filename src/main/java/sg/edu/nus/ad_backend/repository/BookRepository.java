@@ -12,4 +12,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     @Query("SELECT b FROM Book b ORDER BY RAND() LIMIT 10")
     List<Book> getRandomBooks();
+
+    @Query("SELECT b FROM Book b WHERE b.title LIKE %:searchString%")
+    List<Book> searchBooksByTitle(String searchString);
 }

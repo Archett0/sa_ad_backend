@@ -67,6 +67,11 @@ public class BookController {
         return ResponseEntity.ok(bookService.deleteBookById(id));
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<Book>> search(@RequestParam String searchString) {
+        return ResponseEntity.ok(bookService.searchBooksByTitle(searchString));
+    }
+
     @GetMapping("/random")
     public ResponseEntity<List<Book>> getRandom() {
         return ResponseEntity.ok(bookService.getRandomBooks());

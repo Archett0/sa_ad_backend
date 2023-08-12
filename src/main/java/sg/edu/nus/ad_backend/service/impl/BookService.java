@@ -42,6 +42,11 @@ public class BookService implements IBookService {
     }
 
     @Override
+    public List<Book> searchBooksByTitle(String searchString) {
+        return repository.searchBooksByTitle(searchString);
+    }
+
+    @Override
     public List<Book> getRandomBooks() {
         return repository.getRandomBooks();
     }
