@@ -76,4 +76,9 @@ public class BookController {
     public ResponseEntity<List<Book>> getRandom() {
         return ResponseEntity.ok(bookService.getRandomBooks());
     }
+
+    @GetMapping("/recommend")
+    public ResponseEntity<List<Book>> recommend() {
+        return ResponseEntity.ok(bookService.getRandomBooks());
+    }
 }
