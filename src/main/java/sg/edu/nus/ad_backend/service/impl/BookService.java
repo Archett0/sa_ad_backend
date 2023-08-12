@@ -50,4 +50,9 @@ public class BookService implements IBookService {
     public List<Book> getRandomBooks() {
         return repository.getRandomBooks();
     }
+
+    @Override
+    public List<Book> getByRecipientId(Long id) {
+        return repository.getByRecipientId(id);
+    }
 }

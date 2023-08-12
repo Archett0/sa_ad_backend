@@ -12,4 +12,5 @@ public interface IBookService {
     List<Book> getBooksByMemberId(Long id);
     List<Book> searchBooksByTitle(String searchString);
     List<Book> getRandomBooks();
+    List<Book> getByRecipientId(Long id);
 }

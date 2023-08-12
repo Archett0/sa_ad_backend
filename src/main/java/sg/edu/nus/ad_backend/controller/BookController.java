@@ -81,4 +81,13 @@ public class BookController {
     public ResponseEntity<List<Book>> recommend() {
         return ResponseEntity.ok(bookService.getRandomBooks());
     }
+
+    @GetMapping("/recipient/{id}")
+    public ResponseEntity<List<Book>> byRecipientId(@PathVariable("id") Long id) {
+        Member member = memberService.getMemberById(id);
+        if (member == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(bookService.getByRecipientId(id));
+    }
 }
