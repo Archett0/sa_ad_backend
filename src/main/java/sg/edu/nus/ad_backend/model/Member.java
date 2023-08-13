@@ -37,4 +37,10 @@ public class Member extends BasicEntity {
     private String bio;
 
     private String avatar;
+
+    @Column(name = "donation_count")
+    private Integer donationCount;
+
+    @Column(name = "receive_count")
+    private Integer receiveCount;
 }
