@@ -6,6 +6,7 @@ import sg.edu.nus.ad_backend.model.Staff;
 public class EntityToDTO {
     public static MemberDTO memberToDto(Member member) {
         return new MemberDTO(
+                member.getId(),
                 member.getUsername(),
                 member.getDisplayName(),
                 member.getPhoneNumber(),

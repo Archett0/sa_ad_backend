@@ -10,6 +10,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MemberDTO {
+    private Long id;
     private String username;
     private String displayName;
     private String phoneNumber;
