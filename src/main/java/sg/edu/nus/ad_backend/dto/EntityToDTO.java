@@ -26,4 +26,15 @@ public class EntityToDTO {
                 staff.getRole()
         );
     }
+
+    public static MemberRatioDTO getRatioDto(Member member) {
+        Double res = member.getDonationCount() * 1.0 / (member.getDonationCount() + member.getReceiveCount());
+        String formattedRes = String.format("%.2f", res);
+        return new MemberRatioDTO(
+                member.getId(),
+                member.getDonationCount(),
+                member.getReceiveCount(),
+                Double.parseDouble(formattedRes)
+        );
+    }
 }

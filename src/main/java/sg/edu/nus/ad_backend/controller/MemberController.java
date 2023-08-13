@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sg.edu.nus.ad_backend.dto.EntityToDTO;
 import sg.edu.nus.ad_backend.dto.MemberDTO;
+import sg.edu.nus.ad_backend.dto.MemberRatioDTO;
 import sg.edu.nus.ad_backend.model.Member;
 import sg.edu.nus.ad_backend.service.IMemberService;
 import sg.edu.nus.ad_backend.util.EncryptPassword;
@@ -73,5 +74,21 @@ public class MemberController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(memberService.deleteMemberById(id));
+    }
+
+    @GetMapping("/ratio/{id}")
+    public ResponseEntity<Double> oneRatio(@PathVariable("id") Long id) {
+        Member existingMember = memberService.getMemberById(id);
+        if (existingMember == null) {
+            return ResponseEntity.notFound().build();
+        }
+        Double res = existingMember.getDonationCount() * 1.0 / (existingMember.getDonationCount() + existingMember.getReceiveCount());
+        String formattedRes = String.format("%.2f", res);
+        return ResponseEntity.ok(Double.parseDouble(formattedRes));
+    }
+
+    @GetMapping("/ratio")
+    public ResponseEntity<List<MemberRatioDTO>> oneRatio() {
+        return ResponseEntity.ok(memberService.getAllMembers().stream().map(EntityToDTO::getRatioDto).toList());
     }
 }
