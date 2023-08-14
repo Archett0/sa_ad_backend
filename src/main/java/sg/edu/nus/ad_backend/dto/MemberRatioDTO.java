@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MemberRatioDTO {
     private Long id;
+    private String username;
+    private String displayName;
     private Integer donationCount;
     private Integer receiveCount;
     private Double ratio;

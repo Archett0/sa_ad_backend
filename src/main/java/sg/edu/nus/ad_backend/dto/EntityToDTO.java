@@ -32,6 +32,8 @@ public class EntityToDTO {
         String formattedRes = String.format("%.2f", res);
         return new MemberRatioDTO(
                 member.getId(),
+                member.getUsername(),
+                member.getDisplayName(),
                 member.getDonationCount(),
                 member.getReceiveCount(),
                 Double.parseDouble(formattedRes)
