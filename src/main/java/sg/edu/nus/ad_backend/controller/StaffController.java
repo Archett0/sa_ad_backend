@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sg.edu.nus.ad_backend.dto.EntityToDTO;
 import sg.edu.nus.ad_backend.dto.StaffDTO;
+import sg.edu.nus.ad_backend.dto.UpdatePasswordDTO;
 import sg.edu.nus.ad_backend.model.Staff;
 import sg.edu.nus.ad_backend.service.IStaffService;
 import sg.edu.nus.ad_backend.util.EncryptPassword;
@@ -57,5 +58,16 @@ public class StaffController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(staffService.deleteStaffById(id));
+    }
+
+    @PutMapping("/password")
+    public ResponseEntity<Void> updatePassword(@RequestBody UpdatePasswordDTO dto) {
+        Staff existingStaff = staffService.getStaffById(dto.getId());
+        if (existingStaff == null) {
+            return ResponseEntity.notFound().build();
+        }
+        existingStaff.setPassword(EncryptPassword.encodePassword(dto.getPassword()));
+        staffService.saveStaff(existingStaff);
+        return ResponseEntity.ok().build();
     }
 }
