@@ -7,6 +7,7 @@ import sg.edu.nus.ad_backend.dto.MemberDTO;
 import sg.edu.nus.ad_backend.dto.MemberRatioDTO;
 import sg.edu.nus.ad_backend.model.Member;
 import sg.edu.nus.ad_backend.service.IMemberService;
+import sg.edu.nus.ad_backend.util.AgeGrouper;
 import sg.edu.nus.ad_backend.util.EncryptPassword;
 
 import java.util.List;
@@ -88,7 +89,17 @@ public class MemberController {
     }
 
     @GetMapping("/ratio")
-    public ResponseEntity<List<MemberRatioDTO>> oneRatio() {
+    public ResponseEntity<List<MemberRatioDTO>> allRatio() {
         return ResponseEntity.ok(memberService.getAllMembers().stream().map(EntityToDTO::getRatioDto).toList());
+    }
+
+    /**
+     * Group all members by age
+     * @return Group count
+     */
+    @GetMapping("/ageGroup")
+    public ResponseEntity<List<Integer>> ageGroup() {
+        List<Member> members = memberService.getAllMembers();
+        return ResponseEntity.ok(AgeGrouper.group(members));
     }
 }
