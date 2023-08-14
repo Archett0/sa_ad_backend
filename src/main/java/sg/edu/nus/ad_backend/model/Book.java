@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 public class Book extends BasicEntity {
 
-    private Integer isbn;
+    private String isbn;
 
     private String title;
 
