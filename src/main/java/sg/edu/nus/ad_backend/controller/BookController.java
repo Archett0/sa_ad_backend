@@ -90,4 +90,14 @@ public class BookController {
         }
         return ResponseEntity.ok(bookService.getByRecipientId(id));
     }
+
+    @PutMapping("/like/{id}")
+    public ResponseEntity<Book> likeBook(@PathVariable("id") Long id) {
+        Book book = bookService.getBookById(id);
+        if (book == null) {
+            return ResponseEntity.notFound().build();
+        }
+        book.setLikeCount(book.getLikeCount() + 1);
+        return ResponseEntity.ok(bookService.saveBook(book));
+    }
 }
