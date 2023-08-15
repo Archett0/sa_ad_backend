@@ -27,7 +27,7 @@ public class TransactionController {
         if (transaction == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(transactionService.getTransactionById(id));
+        return ResponseEntity.ok(transaction);
     }
 
     @PostMapping
