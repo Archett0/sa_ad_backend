@@ -13,6 +13,9 @@ public class AgeGrouper {
         List<Integer> ageGroupCounts = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0));
         LocalDate currentDate = LocalDate.now();
         for (Member m : members) {
+            if (m.getBirthday() == null) {
+                continue;
+            }
             Period ageP = Period.between(m.getBirthday(), currentDate);
             int age = ageP.getYears();
             if (age < 18) {
