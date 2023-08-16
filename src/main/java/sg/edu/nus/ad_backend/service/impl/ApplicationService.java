@@ -40,4 +40,9 @@ public class ApplicationService implements IApplicationService {
     public List<Application> getByMemberId(Long id) {
         return repository.getApplicationsByMemberId(id);
     }
+
+    @Override
+    public Application getByRecipientIdAndBookId(Long recipientId, Long bookId) {
+        return repository.getByRecipientIdAndBookId(recipientId, bookId);
+    }
 }

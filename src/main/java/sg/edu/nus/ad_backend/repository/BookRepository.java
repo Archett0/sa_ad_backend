@@ -18,4 +18,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     @Query("SELECT a.book FROM Application a WHERE a.recipient.id=:memberId")
     List<Book> getByRecipientId(Long memberId);
+
+    @Query("SELECT a.book FROM Application a WHERE a.recipient.id=:memberId AND a.status=4")
+    List<Book> getCompletedBooksByRecipientId(Long memberId);
 }

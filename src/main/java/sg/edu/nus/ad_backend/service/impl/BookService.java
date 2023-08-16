@@ -55,4 +55,9 @@ public class BookService implements IBookService {
     public List<Book> getByRecipientId(Long id) {
         return repository.getByRecipientId(id);
     }
+
+    @Override
+    public List<Book> getCompletedByRecipientId(Long id) {
+        return repository.getCompletedBooksByRecipientId(id);
+    }
 }
