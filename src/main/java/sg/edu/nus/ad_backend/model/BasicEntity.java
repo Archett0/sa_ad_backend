@@ -1,5 +1,6 @@
 package sg.edu.nus.ad_backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,8 +18,10 @@ public abstract class BasicEntity {
     private Long id;
 
     @Column(name = "gmt_created", updatable = false)
+    @JsonIgnore
     private LocalDateTime gmtCreated;
 
     @Column(name = "gmt_modified")
+    @JsonIgnore
     private LocalDateTime gmtModified;
 }
