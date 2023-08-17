@@ -1,5 +1,6 @@
 package sg.edu.nus.ad_backend.controller;
 
+import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sg.edu.nus.ad_backend.common.BookConstants;
@@ -51,12 +52,21 @@ public class BookController {
     }
 
     @PutMapping("/{id}")
+    @Transactional
     public ResponseEntity<Book> update(@PathVariable("id") Long id, @RequestBody Book book) {
         Book existing = bookService.getBookById(id);
         if (existing == null) {
             return ResponseEntity.notFound().build();
         }
         book.setId(id);
+        // if status changed
+        if (!Objects.equals(existing.getStatus(), book.getStatus())) {
+            if (existing.getStatus().equals(BookConstants.BOOK_DEPOSITED) && book.getStatus().equals(BookConstants.BOOK_AVAILABLE)) {
+                Member member = memberService.getMemberById(book.getDonor().getId());
+                member.setDonationCount(member.getDonationCount() + 1);
+                memberService.saveMember(member);
+            }
+        }
         return ResponseEntity.ok(bookService.saveBook(book));
     }
 

@@ -149,6 +149,10 @@ public class ApplicationController {
         Book book = bookService.getBookById(application.getBook().getId());
         book.setStatus(BookConstants.BOOK_UNAVAILABLE);
         bookService.saveBook(book);
+        // auto update receive count
+        Member member = memberService.getMemberById(application.getRecipient().getId());
+        member.setReceiveCount(member.getReceiveCount() + 1);
+        memberService.saveMember(member);
         return ResponseEntity.ok().build();
     }
 
