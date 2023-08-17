@@ -1,34 +1,49 @@
 package sg.edu.nus.ad_backend.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import sg.edu.nus.ad_backend.common.ApplicationConstants;
 import sg.edu.nus.ad_backend.common.BookConstants;
 import sg.edu.nus.ad_backend.dto.CompleteApplicationDTO;
-import sg.edu.nus.ad_backend.model.Application;
-import sg.edu.nus.ad_backend.model.Book;
-import sg.edu.nus.ad_backend.model.Member;
-import sg.edu.nus.ad_backend.service.IApplicationService;
-import sg.edu.nus.ad_backend.service.IBookService;
-import sg.edu.nus.ad_backend.service.IMemberService;
+import sg.edu.nus.ad_backend.model.*;
+import sg.edu.nus.ad_backend.security.principal.UserPrincipal;
+import sg.edu.nus.ad_backend.security.token.JwtDecoder;
+import sg.edu.nus.ad_backend.security.token.JwtToPrincipalConverter;
+import sg.edu.nus.ad_backend.service.*;
+import sg.edu.nus.ad_backend.util.RoleIdByString;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/application")
 public class ApplicationController {
+    private final JwtDecoder jwtDecoder;
+    private final JwtToPrincipalConverter jwtToPrincipalConverter;
     private final IApplicationService applicationService;
     private final IMemberService memberService;
     private final IBookService bookService;
+    private final IBookTimestampService bookTimestampService;
+    private final IApplicationTimestampService applicationTimestampService;
 
-    public ApplicationController(IApplicationService applicationService,
+    public ApplicationController(JwtDecoder jwtDecoder,
+                                 JwtToPrincipalConverter jwtToPrincipalConverter,
+                                 IApplicationService applicationService,
                                  IMemberService memberService,
-                                 IBookService bookService) {
+                                 IBookService bookService,
+                                 IBookTimestampService bookTimestampService,
+                                 IApplicationTimestampService applicationTimestampService) {
+        this.jwtDecoder = jwtDecoder;
+        this.jwtToPrincipalConverter = jwtToPrincipalConverter;
         this.applicationService = applicationService;
         this.memberService = memberService;
         this.bookService = bookService;
+        this.bookTimestampService = bookTimestampService;
+        this.applicationTimestampService = applicationTimestampService;
     }
 
     @GetMapping
@@ -80,7 +95,7 @@ public class ApplicationController {
 
     @PutMapping("/approve/{id}")
     @Transactional
-    public ResponseEntity<Void> approveApplication(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> approveApplication(@PathVariable("id") Long id, HttpServletRequest request) {
         Application application = applicationService.getApplicationById(id);
         if (application == null) {
             return ResponseEntity.notFound().build();
@@ -98,11 +113,14 @@ public class ApplicationController {
         Book book = bookService.getBookById(application.getBook().getId());
         book.setStatus(BookConstants.BOOK_RESERVED);
         bookService.saveBook(book);
+        // audit
+        audit(application, ApplicationConstants.APPLICATION_PENDING, BookConstants.BOOK_AVAILABLE, request);
         return ResponseEntity.ok().build();
     }
 
     @PutMapping("/reject/{id}")
-    public ResponseEntity<Void> rejectApplication(@PathVariable("id") Long id) {
+    @Transactional
+    public ResponseEntity<Void> rejectApplication(@PathVariable("id") Long id, HttpServletRequest request) {
         Application application = applicationService.getApplicationById(id);
         if (application == null) {
             return ResponseEntity.notFound().build();
@@ -112,11 +130,14 @@ public class ApplicationController {
         }
         application.setStatus(ApplicationConstants.APPLICATION_REJECTED);
         applicationService.saveApplication(application);
+        // audit
+        audit(application, ApplicationConstants.APPLICATION_PENDING, -1, request);
         return ResponseEntity.ok().build();
     }
 
     @PutMapping("/ready/{id}")
-    public ResponseEntity<Void> readyApplication(@PathVariable("id") Long id) {
+    @Transactional
+    public ResponseEntity<Void> readyApplication(@PathVariable("id") Long id, HttpServletRequest request) {
         Application application = applicationService.getApplicationById(id);
         if (application == null) {
             return ResponseEntity.notFound().build();
@@ -126,12 +147,14 @@ public class ApplicationController {
         }
         application.setStatus(ApplicationConstants.APPLICATION_READY_FOR_COLLECTION);
         applicationService.saveApplication(application);
+        // audit
+        audit(application, ApplicationConstants.APPLICATION_APPROVED, -1, request);
         return ResponseEntity.ok().build();
     }
 
     @PutMapping("/complete")
     @Transactional
-    public ResponseEntity<Void> completeApplication(@RequestBody CompleteApplicationDTO dto) {
+    public ResponseEntity<Void> completeApplication(@RequestBody CompleteApplicationDTO dto, HttpServletRequest request) {
         Application application = applicationService.getByRecipientIdAndBookId(dto.getRecipientId(), dto.getBookId());
         if (application == null) {
             return ResponseEntity.notFound().build();
@@ -153,12 +176,14 @@ public class ApplicationController {
         Member member = memberService.getMemberById(application.getRecipient().getId());
         member.setReceiveCount(member.getReceiveCount() + 1);
         memberService.saveMember(member);
+        // audit
+        audit(application, ApplicationConstants.APPLICATION_READY_FOR_COLLECTION, BookConstants.BOOK_RESERVED, request);
         return ResponseEntity.ok().build();
     }
 
     @PutMapping("/cancel")
     @Transactional
-    public ResponseEntity<Void> cancelApplication(@RequestBody CompleteApplicationDTO dto) {
+    public ResponseEntity<Void> cancelApplication(@RequestBody CompleteApplicationDTO dto, HttpServletRequest request) {
         Application application = applicationService.getByRecipientIdAndBookId(dto.getRecipientId(), dto.getBookId());
         if (application == null) {
             return ResponseEntity.notFound().build();
@@ -176,6 +201,39 @@ public class ApplicationController {
         Book book = bookService.getBookById(application.getBook().getId());
         book.setStatus(BookConstants.BOOK_AVAILABLE);
         bookService.saveBook(book);
+        // audit
+        audit(application, ApplicationConstants.APPLICATION_READY_FOR_COLLECTION, BookConstants.BOOK_RESERVED, request);
         return ResponseEntity.ok().build();
+    }
+
+    private void audit(Application app, Integer prev, Integer bookPrev, HttpServletRequest request) {
+        ApplicationTimestamp timestamp = new ApplicationTimestamp();
+        timestamp.setApplication(app);
+        timestamp.setStatusPrev(prev);
+        timestamp.setStatusNow(app.getStatus());
+        timestamp.setActionTime(LocalDateTime.now());
+
+        String bearerToken = request.getHeader("Authorization");
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            String token = bearerToken.substring(7);
+            UserPrincipal userPrincipal = jwtToPrincipalConverter.convert(jwtDecoder.decode(token));
+            timestamp.setRoleType(RoleIdByString.getRoleType(userPrincipal.displayRoles()));
+            timestamp.setRoleId(userPrincipal.getUserId());
+            timestamp.setRoleUsername(userPrincipal.getUsername());
+            applicationTimestampService.saveApplicationTimestamp(timestamp);
+
+            if (bookPrev != -1) {
+                Book book = bookService.getBookById(app.getBook().getId());
+                BookTimestamp bookTimestamp = new BookTimestamp();
+                bookTimestamp.setBook(book);
+                bookTimestamp.setStatusPrev(bookPrev);
+                bookTimestamp.setStatusNow(book.getStatus());
+                bookTimestamp.setActionTime(LocalDateTime.now());
+                bookTimestamp.setRoleType(RoleIdByString.getRoleType(userPrincipal.displayRoles()));
+                bookTimestamp.setRoleId(userPrincipal.getUserId());
+                bookTimestamp.setRoleUsername(userPrincipal.getUsername());
+                bookTimestampService.saveBookTimestamp(bookTimestamp);
+            }
+        }
     }
 }
