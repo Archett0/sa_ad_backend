@@ -1,5 +1,6 @@
 package sg.edu.nus.ad_backend.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -53,7 +54,7 @@ public class BookController {
 
     @PutMapping("/{id}")
     @Transactional
-    public ResponseEntity<Book> update(@PathVariable("id") Long id, @RequestBody Book book) {
+    public ResponseEntity<Book> update(@PathVariable("id") Long id, @RequestBody Book book, HttpServletRequest request) {
         Book existing = bookService.getBookById(id);
         if (existing == null) {
             return ResponseEntity.notFound().build();
