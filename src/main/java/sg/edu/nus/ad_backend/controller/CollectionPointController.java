@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sg.edu.nus.ad_backend.common.BookConstants;
 import sg.edu.nus.ad_backend.dto.CPCountDTO;
+import sg.edu.nus.ad_backend.dto.CollectionPointBooksDTO;
 import sg.edu.nus.ad_backend.model.Book;
 import sg.edu.nus.ad_backend.model.CollectionPoint;
 import sg.edu.nus.ad_backend.service.IBookService;
@@ -102,5 +103,21 @@ public class CollectionPointController {
             }
         }
         return ResponseEntity.ok(dto);
+    }
+
+    @GetMapping("/groupCount")
+    public ResponseEntity<List<CollectionPointBooksDTO>> group() {
+        List<CollectionPoint> collectionPoints = collectionPointService.getAllCollectionPoints();
+        Map<Long, CollectionPointBooksDTO> dtoMap = new HashMap<>();;
+        for (CollectionPoint cp: collectionPoints) {
+            CollectionPointBooksDTO dto = new CollectionPointBooksDTO(cp.getId(), cp.getName(), cp.getAddress(), 0);
+            dtoMap.put(cp.getId(), dto);
+        }
+        List<Book> books = bookService.getAllBooks();
+        for (Book book: books) {
+            CollectionPointBooksDTO dto = dtoMap.get(book.getCollectionPoint().getId());
+            dto.setCount(dto.getCount() + 1);
+        }
+        return ResponseEntity.ok(dtoMap.values().stream().toList());
     }
 }
