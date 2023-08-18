@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import sg.edu.nus.ad_backend.common.BookConstants;
+import sg.edu.nus.ad_backend.common.ServerConstants;
 import sg.edu.nus.ad_backend.dto.MachineLearningDTO;
 import sg.edu.nus.ad_backend.dto.StatusByMonthDTO;
 import sg.edu.nus.ad_backend.model.Application;
@@ -112,12 +113,13 @@ public class BookController {
                 .limit(5).toList();
         List<MachineLearningDTO> machineLearningDTOS = new ArrayList<>();
         // recommend by book title
-        String baseUrl = "https://adt8mlapi.azurewebsites.net/api/recommend?book_title=";
-        String urlSuffix = "&num_recommendations=5";
         try {
             for (Application app : readyToRecommend) {
                 ResponseEntity<List<MachineLearningDTO>> response = restTemplate.exchange(
-                        baseUrl + app.getBook().getTitle() + urlSuffix,
+                        ServerConstants.urlApi
+                                + ServerConstants.urlQueryPrefix
+                                + app.getBook().getTitle()
+                                + ServerConstants.urlQuerySuffix,
                         HttpMethod.GET,
                         null,
                         new ParameterizedTypeReference<>() {
