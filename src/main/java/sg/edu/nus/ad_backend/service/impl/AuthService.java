@@ -7,6 +7,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import sg.edu.nus.ad_backend.controller.MemberController;
 import sg.edu.nus.ad_backend.security.model.LoginToken;
 import sg.edu.nus.ad_backend.security.principal.UserPrincipal;
 import sg.edu.nus.ad_backend.security.token.JwtIssuer;
@@ -29,6 +30,7 @@ public class AuthService implements IAuthService {
         var roles = principal.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
 
         var token = jwtIssuer.issue(principal.getUserId(), principal.getUsername(), roles);
+        MemberController.totalLoginCount += 1;
         return ResponseEntity.ok(LoginToken.builder().accessToken(token).build());
     }
 }

@@ -16,6 +16,7 @@ import java.util.List;
 @RequestMapping("/api/member")
 public class MemberController {
     private final IMemberService memberService;
+    public static Integer totalLoginCount = 18726;
 
     public MemberController(IMemberService memberService) {
         this.memberService = memberService;
@@ -101,5 +102,10 @@ public class MemberController {
     public ResponseEntity<List<Integer>> ageGroup() {
         List<Member> members = memberService.getAllMembers();
         return ResponseEntity.ok(AgeGrouper.group(members));
+    }
+
+    @GetMapping("/loginCount")
+    public ResponseEntity<Integer> loginCount() {
+        return ResponseEntity.ok(totalLoginCount);
     }
 }
