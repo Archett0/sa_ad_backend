@@ -2,30 +2,39 @@ package sg.edu.nus.ad_backend.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import sg.edu.nus.ad_backend.common.BookConstants;
+import sg.edu.nus.ad_backend.dto.MachineLearningDTO;
 import sg.edu.nus.ad_backend.dto.StatusByMonthDTO;
+import sg.edu.nus.ad_backend.model.Application;
 import sg.edu.nus.ad_backend.model.Book;
 import sg.edu.nus.ad_backend.model.Member;
+import sg.edu.nus.ad_backend.service.IApplicationService;
 import sg.edu.nus.ad_backend.service.IBookService;
 import sg.edu.nus.ad_backend.service.IMemberService;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/book")
 public class BookController {
     private final IBookService bookService;
     private final IMemberService memberService;
+    private final IApplicationService applicationService;
+    private final RestTemplate restTemplate;
 
-    public BookController(IBookService bookService, IMemberService memberService) {
+    public BookController(IBookService bookService, IMemberService memberService, IApplicationService applicationService, RestTemplate restTemplate) {
         this.bookService = bookService;
         this.memberService = memberService;
+        this.applicationService = applicationService;
+        this.restTemplate = restTemplate;
     }
 
     @GetMapping
@@ -94,9 +103,37 @@ public class BookController {
         return ResponseEntity.ok(bookService.getRandomBooks());
     }
 
-    @GetMapping("/recommend")
-    public ResponseEntity<List<Book>> recommend() {
-        return ResponseEntity.ok(bookService.getRandomBooks());
+    @GetMapping("/recommend/{id}")
+    public ResponseEntity<List<Book>> recommend(@PathVariable("id") Long id) {
+        // get most recent 5 books from application
+        List<Application> applications = applicationService.getByMemberId(id);
+        List<Application> readyToRecommend = applications.stream()
+                .sorted((app1, app2) -> app2.getGmtModified().compareTo(app1.getGmtModified()))
+                .limit(5).toList();
+        List<MachineLearningDTO> machineLearningDTOS = new ArrayList<>();
+        // recommend by book title
+        String baseUrl = "https://adt8mlapi.azurewebsites.net/api/recommend?book_title=";
+        String urlSuffix = "&num_recommendations=5";
+        for (Application app : readyToRecommend) {
+            ResponseEntity<List<MachineLearningDTO>> response = restTemplate.exchange(
+                    baseUrl + app.getBook().getTitle() + urlSuffix,
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<>() {
+                    });
+            machineLearningDTOS.addAll(Objects.requireNonNull(response.getBody()));
+        }
+        // select books from DB to recommend
+        Set<String> isbnSet = new HashSet<>(machineLearningDTOS.stream().map(MachineLearningDTO::getISBN).toList());
+        List<Book> books = bookService.getAllBooks();
+        List<Book> res = books.stream()
+                .filter(book -> isbnSet.contains(book.getIsbn()))
+                .collect(Collectors.toList());
+        // if only a few books to recommend, then go random
+        if (res.size() <= 10) {
+            return ResponseEntity.ok(bookService.getRandomBooks());
+        }
+        return ResponseEntity.ok(res);
     }
 
     @GetMapping("/recipient/{id}")
