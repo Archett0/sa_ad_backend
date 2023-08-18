@@ -108,7 +108,7 @@ public class CollectionPointController {
     @GetMapping("/groupCount")
     public ResponseEntity<List<CollectionPointBooksDTO>> group() {
         List<CollectionPoint> collectionPoints = collectionPointService.getAllCollectionPoints();
-        Map<Long, CollectionPointBooksDTO> dtoMap = new HashMap<>();;
+        Map<Long, CollectionPointBooksDTO> dtoMap = new HashMap<>();
         for (CollectionPoint cp: collectionPoints) {
             CollectionPointBooksDTO dto = new CollectionPointBooksDTO(cp.getId(), cp.getName(), cp.getAddress(), 0);
             dtoMap.put(cp.getId(), dto);

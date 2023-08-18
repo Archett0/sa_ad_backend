@@ -5,11 +5,15 @@ import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sg.edu.nus.ad_backend.common.BookConstants;
+import sg.edu.nus.ad_backend.dto.StatusByMonthDTO;
 import sg.edu.nus.ad_backend.model.Book;
 import sg.edu.nus.ad_backend.model.Member;
 import sg.edu.nus.ad_backend.service.IBookService;
 import sg.edu.nus.ad_backend.service.IMemberService;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -149,5 +153,28 @@ public class BookController {
         book.setStatus(BookConstants.BOOK_REJECTED);
         bookService.saveBook(book);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/statusByMonth")
+    public ResponseEntity<List<StatusByMonthDTO>> statusByMonth() {
+        LocalDate currentDate = LocalDate.now();
+        List<LocalDate> months = new ArrayList<>();
+        for (int i = 5; i >= 0; i--) {
+            months.add(currentDate.minusMonths(i));
+        }
+        List<Book> books = bookService.getAllBooks();
+        List<StatusByMonthDTO> statsList = new ArrayList<>();
+        for (LocalDate month : months) {
+            List<Book> booksInMonth = books.stream()
+                    .filter(book -> book.getGmtModified().toLocalDate().getYear() == month.getYear()
+                            && book.getGmtModified().toLocalDate().getMonth() == month.getMonth())
+                    .toList();
+            long depositedCount = booksInMonth.stream().filter(book -> Objects.equals(book.getStatus(), BookConstants.BOOK_DEPOSITED)).count();
+            long completedCount = booksInMonth.stream().filter(book -> Objects.equals(book.getStatus(), BookConstants.BOOK_UNAVAILABLE)).count();
+            long rejectedCount = booksInMonth.stream().filter(book -> Objects.equals(book.getStatus(), BookConstants.BOOK_REJECTED)).count();
+            YearMonth yearMonth = YearMonth.from(month);
+            statsList.add(new StatusByMonthDTO(yearMonth, (int) depositedCount, (int) completedCount, (int) rejectedCount));
+        }
+        return ResponseEntity.ok(statsList);
     }
 }
