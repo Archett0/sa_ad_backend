@@ -177,4 +177,10 @@ public class BookController {
         }
         return ResponseEntity.ok(statsList);
     }
+
+    @GetMapping("/others/{id}")
+    public ResponseEntity<List<Book>> allExceptDonor(@PathVariable("id") Long id) {
+        List<Book> books = bookService.getAllBooks().stream().filter(book -> !Objects.equals(book.getDonor().getId(), id)).toList();
+        return ResponseEntity.ok(books);
+    }
 }
