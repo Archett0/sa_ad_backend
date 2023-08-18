@@ -114,14 +114,19 @@ public class BookController {
         // recommend by book title
         String baseUrl = "https://adt8mlapi.azurewebsites.net/api/recommend?book_title=";
         String urlSuffix = "&num_recommendations=5";
-        for (Application app : readyToRecommend) {
-            ResponseEntity<List<MachineLearningDTO>> response = restTemplate.exchange(
-                    baseUrl + app.getBook().getTitle() + urlSuffix,
-                    HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<>() {
-                    });
-            machineLearningDTOS.addAll(Objects.requireNonNull(response.getBody()));
+        try {
+            for (Application app : readyToRecommend) {
+                ResponseEntity<List<MachineLearningDTO>> response = restTemplate.exchange(
+                        baseUrl + app.getBook().getTitle() + urlSuffix,
+                        HttpMethod.GET,
+                        null,
+                        new ParameterizedTypeReference<>() {
+                        });
+                machineLearningDTOS.addAll(Objects.requireNonNull(response.getBody()));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.ok(bookService.getRandomBooks());
         }
         // select books from DB to recommend
         Set<String> isbnSet = new HashSet<>(machineLearningDTOS.stream().map(MachineLearningDTO::getISBN).toList());
