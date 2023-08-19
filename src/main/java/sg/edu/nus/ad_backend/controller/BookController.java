@@ -134,6 +134,7 @@ public class BookController {
         List<Book> res = books.stream()
                 .filter(book -> isbnSet.contains(book.getIsbn()))
                 .filter(book -> Objects.equals(book.getStatus(), BookConstants.BOOK_AVAILABLE))
+                .filter(book -> !Objects.equals(book.getDonor().getId(), id))
                 .collect(Collectors.toList());
         // if only a few books to recommend, then go random
         if (res.size() <= 10) {
