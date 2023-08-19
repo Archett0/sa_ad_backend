@@ -112,6 +112,11 @@ public class BookController {
                 .sorted((app1, app2) -> app2.getGmtModified().compareTo(app1.getGmtModified()))
                 .limit(5).toList();
         List<MachineLearningDTO> machineLearningDTOS = new ArrayList<>();
+        // get random books for error situations
+        List<Book> randomRes = bookService.getRandomBooks().stream()
+                .filter(book -> Objects.equals(book.getStatus(), BookConstants.BOOK_AVAILABLE))
+                .filter(book -> !Objects.equals(book.getDonor().getId(), id))
+                .toList();
         // recommend by book title
         try {
             for (Application app : readyToRecommend) {
@@ -126,7 +131,7 @@ public class BookController {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.ok(bookService.getRandomBooks());
+            return ResponseEntity.ok(randomRes);
         }
         // select books from DB to recommend
         Set<String> isbnSet = new HashSet<>(machineLearningDTOS.stream().map(MachineLearningDTO::getISBN).toList());
@@ -138,7 +143,7 @@ public class BookController {
                 .collect(Collectors.toList());
         // if only a few books to recommend, then go random
         if (res.size() <= 10) {
-            return ResponseEntity.ok(bookService.getRandomBooks().stream().filter(book -> Objects.equals(book.getStatus(), BookConstants.BOOK_AVAILABLE)).toList());
+            return ResponseEntity.ok(randomRes);
         }
         return ResponseEntity.ok(res);
     }
