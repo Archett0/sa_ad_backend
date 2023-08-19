@@ -101,7 +101,7 @@ public class BookController {
 
     @GetMapping("/random")
     public ResponseEntity<List<Book>> getRandom() {
-        return ResponseEntity.ok(bookService.getRandomBooks());
+        return ResponseEntity.ok(bookService.getRandomBooks().stream().filter(book -> Objects.equals(book.getStatus(), BookConstants.BOOK_AVAILABLE)).toList());
     }
 
     @GetMapping("/recommend/{id}")
@@ -133,10 +133,11 @@ public class BookController {
         List<Book> books = bookService.getAllBooks();
         List<Book> res = books.stream()
                 .filter(book -> isbnSet.contains(book.getIsbn()))
+                .filter(book -> Objects.equals(book.getStatus(), BookConstants.BOOK_AVAILABLE))
                 .collect(Collectors.toList());
         // if only a few books to recommend, then go random
         if (res.size() <= 10) {
-            return ResponseEntity.ok(bookService.getRandomBooks());
+            return ResponseEntity.ok(bookService.getRandomBooks().stream().filter(book -> Objects.equals(book.getStatus(), BookConstants.BOOK_AVAILABLE)).toList());
         }
         return ResponseEntity.ok(res);
     }
