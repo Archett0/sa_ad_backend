@@ -115,11 +115,9 @@ public class BookController {
         // recommend by book title
         try {
             for (Application app : readyToRecommend) {
+                String url = ServerConstants.urlApi + ServerConstants.urlQueryPrefix + app.getBook().getTitle() + ServerConstants.urlQuerySuffix;
                 ResponseEntity<List<MachineLearningDTO>> response = restTemplate.exchange(
-                        ServerConstants.urlApi
-                                + ServerConstants.urlQueryPrefix
-                                + app.getBook().getTitle()
-                                + ServerConstants.urlQuerySuffix,
+                        url,
                         HttpMethod.GET,
                         null,
                         new ParameterizedTypeReference<>() {
