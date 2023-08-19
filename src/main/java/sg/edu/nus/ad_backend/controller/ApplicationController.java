@@ -13,6 +13,7 @@ import sg.edu.nus.ad_backend.security.principal.UserPrincipal;
 import sg.edu.nus.ad_backend.security.token.JwtDecoder;
 import sg.edu.nus.ad_backend.security.token.JwtToPrincipalConverter;
 import sg.edu.nus.ad_backend.service.*;
+import sg.edu.nus.ad_backend.util.AutoApprove;
 import sg.edu.nus.ad_backend.util.RoleIdByString;
 
 import java.time.LocalDateTime;
@@ -62,6 +63,10 @@ public class ApplicationController {
 
     @PostMapping
     public ResponseEntity<Application> create(@RequestBody Application application) {
+        Member member = application.getRecipient();
+        if (AutoApprove.judge(member)) {
+            application.setStatus(ApplicationConstants.APPLICATION_APPROVED);
+        }
         return ResponseEntity.ok(applicationService.saveApplication(application));
     }
 
