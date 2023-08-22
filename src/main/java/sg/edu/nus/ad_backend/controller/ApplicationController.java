@@ -64,6 +64,9 @@ public class ApplicationController {
     @PostMapping
     public ResponseEntity<Application> create(@RequestBody Application application) {
         Member member = memberService.getMemberById(application.getRecipient().getId());
+        if (applicationService.getByMemberId(member.getId()).isEmpty()) {
+            application.setStatus(ApplicationConstants.APPLICATION_APPROVED);
+        }
         if (AutoApprove.judge(member)) {
             application.setStatus(ApplicationConstants.APPLICATION_APPROVED);
         }
